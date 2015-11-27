@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+		<meta name="description" content="Involute spur gear generator and simulator" />
+		<meta name="keywords" content="Gear generator, simulator, geargenerator, html, css, javascript, svg, download, free" />
+		<meta name="author" content="Abel Vincze, Iparigrafika Ltd." />
+		<meta property="og:url" content="http://geargenerator.com/" />
+		<meta property="og:title" content="Involute spur gear generator and simulator" />
+		<meta property="og:description" content="Gear Generator is a tool for creating involute spur gears and download them in SVG format. In addition it let you compose full gear layouts with connetcted gears to design multiple gears system with control of the input/output ratio and rotation speed. Gears can be animated with various speed to demonstrate working mechanism" />
+		<meta property="og:image" content="http://geargenerator.com/shareimage.jpg" />
+		<link rel="canonical" href="http://geargenerator.com/" />
+		<title>Gear Generator</title>
+		<script src="js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="js/gear_generator.js"></script>
+		<link href='js/geargenerator.css' rel='stylesheet' type='text/css'>
+	</head>
+	<body class="col1">
+		<div id="screencontainer">
+			<div id="screen"></div>
+		</div>
+		<div id="panel">
+			<h1 id="title">Gear Generator</h1>
+			<p class="title">Gear</p><p class="title">Generator</p>
+			<div id="animpanel">
+				<label><h2>Animation:</h2></label>
+				<button onclick="anim(0)">Start/Stop</button><button onclick="anim(1)">Freeze</button><button onclick="anim(2)">Reset</button><br>
+				<label for="RPM">Speed (RPM)*:</label>
+				<input type="text" id="RPM" value="6"><br>
+				<span class="rem">* Shift + Enter: Set RPM of the selected gear</span>
+			</div>
+			<div id="gearlist">
+				<label><h2>Gears:</h2></label>
+				<button onclick="addNewGear()" title="Add a new gear connected to the selected one">Add New</button><button class="first" onclick="removeGear()" title="Remove selected gear and all child gears">Remove</button><button onclick="clearAll()" class="last" title="Clear all, and start with a single default gear">Clear</button>
+				
+				<ul id="gearselector">
+					<!--<li class="selected">Gear 1 - Drive gear</li>
+					<li>Gear 2 - second gear</li>-->
+				</ul>
+			</div>
+			<h2>Connection properties</h2>
+			<p>
+				<label for="PG">Parent gear #:</label>
+				<input type="text" id="PG"> <button class="select" onclick="selectParent()" title="Select parent gear">Select</button>
+				<label for="CAXLE">Axle connection:</label>
+				<input type="checkbox" checked="checked" id="CAXLE" class="thecheckbox"><br>
+	
+				<label for="CA">Connection angle:</label>
+				<input type="text" id="CA"> <button class="first" onclick="Aadd(-5)">–</button><button class="last" onclick="Aadd(5)">+</button>
+			</p>
+			<h2>Gear properties</h2>
+			<p>
+				<label for="N">Number of teeth* (N):</label>
+				<input type="text" id="N"> <button class="first" onclick="Nadd(-1)">–</button><button class="last" onclick="Nadd(1)">+</button><br>
+	
+				<label for="D">Pitch diameter* (D):</label>
+				<input type="text" id="D"><br>
+				
+				<label for="P">Diametral pitch (P):</label>
+				<input type="text" id="P"><br>
+			
+				<label for="PA">Pressure Angle (PA):</label>
+				<input type="text" id="PA"> <button class="first" onclick="PAadd(-1)">–</button><button class="last" onclick="PAadd(1)">+</button><br>
+				<span class="rem">* Shift + Enter: modifies the Diametral pitch</span>
+			</p>
+			<p>
+				<form action="downloadsvg.php" method="post">
+					<input name="data" type="hidden" id="svgdata">
+					<input name="filename" type="hidden" id="svgfilename">
+					<label>Gear vector image:</label> <button type="submit" name="downloadsvg" id="downloadsvg" title="Download selected Gear in SVG vector image format">Download SVG</button>
+				</form>
+				<!--<textarea id="out"></textarea>-->
+			</p>
+			<div>
+				<h2>Display</h2>	
+				<label for="scale">Scale (Pixel per Unit):</label>
+				<input type="text" id="scale" value="100"> <button class="first" onclick="scalem(.5)">–</button><button class="last" onclick="scalem(2)">+</button><br>
+				<label for="grid">Grid:</label>
+				<input type="checkbox" id="grid" class="thecheckbox display"><br>
+				<label for="guides">Gear guides:</label>
+				<input type="checkbox" id="guides" class="thecheckbox display"><br>
+				<label for="labels">Gear label:</label>
+				<input type="checkbox" id="labels" class="thecheckbox display"><br>
+				<label for="theme">Color theme:</label>
+				<button class="first" onclick="setTheme(0)" title="Switch to Light theme">Light</button><button class="next" onclick="setTheme(1)" title="Switch to Blueprint theme">Blueprint</button><button class="last" onclick="setTheme(2)" title="Switch to Dark theme">Dark</button>
+			</div>
+			<div id="about">
+				<h2>About</h2>
+				<p>
+					Gear Generator is a tool for creating <a href="http://en.wikipedia.org/wiki/Involute_gear" target="_blank">involute spur gears</a> and download them in SVG format. In addition it let you compose full gear layouts with connetcted gears to design multiple gears system with control of the input/output ratio and rotation speed. Gears can be animated with various speed to demonstrate working mechanism.
+				</p>
+				<p>
+					Why this tool was created? Just for fun. I'm working on a hobby project, <a href="https://www.behance.net/wip/316985" target="_blank">a scale construction machine</a>, which needed some spur gears, and i quickly made a simple <a href="index_proto.html" target="_blank">spur gear creator</a> script in Javascript with SVG output. As it was done, i couldn't stop, and i added more and more features, and finally i got this tool. It was a pleasure to code the whole thing, i'm a bit sad it is already done, so if you have any idea, what would be a helpful feature, just let me know by sending an <a href="mailto:abel@iparigrafika.hu">e-mail</a> (I couldn't have done this tool without <a href="http://pageflip-books.com/" target="_blank">Pageflip</a>, my main project).
+				</p>
+				<p>
+					Notes about browser compatibility: all new major browsers are supported (i didn't tested IE), but unfortunately Chrome can't render SVG circle correctly. The winners are: Opera for the best performance (shame on me, i never use it) and Firefox for the best looking SVG render.
+				</p>
+			</div>
+			<div>
+				<p>If you like it, please share:
+					<a href="https://twitter.com/intent/tweet?original_referer=http%3a%2f%2fgeargenerator.com&amp;url=http%3a%2f%2fgeargenerator.com&amp;text=What+a+nice+gear+generator+%23HTML+%23CSS+via+%40AbelVincze" target="_blank"><svg style="margin-left: 12px;" version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="34px" height="25px" viewBox="0 0 34 25" xml:space="preserve"><path class="shareicon" d="M31.016,11.572c-0.971,0-1.908-0.136-2.793-0.384c0-0.03,0-0.06,0-0.091c0.154,0.02,0.315,0.03,0.479,0.03c1.3,0,2.445-0.629,3.129-1.587c-0.612,0.246-1.283,0.382-1.987,0.382c-0.63,0-1.233-0.109-1.788-0.308c-0.145-0.658-0.377-1.301-0.709-1.913c-2.406-4.452-6.177-3.977-6.177-3.977s2.776-0.54,2.646-1.276C23.686,1.71,21.12,2.852,21.12,2.852s1.424-0.77,1.224-1.096c-0.189-0.311-2.305,0.961-2.305,0.961s0.348-0.492,0.215-0.635c-0.134-0.143-1.818,1.271-3.108,3.364c-1.291,2.094-1.803,4.013-1.803,4.013s-0.664-0.812-2.166-1.824c-1.606-1.078-8.432-3.583-8.432-3.583S4.483,4.901,5.447,6.391c0.606,0.94,1.946,1.487,1.946,1.487s-0.552,0-0.98,0.06c-0.398,0.056-0.88,0.167-0.88,0.167S5.396,9.21,6.65,10.164c1.253,0.952,2.341,1.048,2.341,1.048s-0.682,0.049-1.197,0.225c-0.534,0.184-0.92,0.644-0.92,0.644s0.409,0.794,1.268,1.365c1.134,0.753,2.604,0.515,2.604,0.515s-1.316,0.338-1.23,1.372c0.123,1.518,2.347,1.211,2.347,1.211c-1.527,1.587-3.729,2.512-6.158,2.512c-2.196,0-4.213-0.74-5.703-2.072c0,0,8.422,11.141,22.605,3.168c2.902-1.633,4.925-4.441,5.47-7.353c0.256,0.049,0.521,0.076,0.792,0.076c1.206,0,2.283-0.52,3.009-1.336C31.591,11.557,31.305,11.572,31.016,11.572z"/></svg></a>
+					<a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fgeargenerator.com" target="_blank"><svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="25px" viewBox="0 0 30 25" xml:space="preserve"><path class="shareicon" d="M20.035,24.729h-5.323V12.365h-2.659V8.103h2.659V5.545C14.712,2.069,16.216,0,20.48,0h3.551v4.263h-2.219c-1.662,0-1.771,0.596-1.771,1.708l-0.005,2.132h4.022l-0.473,4.262h-3.551V24.729z"/></svg></a>
+					<a href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fgeargenerator.com&amp;media=http%3a%2f%2fgeargenerator.com%2fshareimage.jpg&amp;description=Involute+spur+gear+generator+and+simulator+in+%23HTML+%23CSS" target="_blank"><svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="32px" height="25px" viewBox="0 0 32 25" xml:space="preserve"><path class="shareicon" d="M19.607,16.155c-0.604,2.542-1.196,4.992-2.489,6.926c-0.394,0.592-0.792,1.337-1.466,1.656c-1-4.937,1.084-9.092,1.912-13.243c-1.055-2.06-0.397-5.552,1.852-5.945c3.262-0.575,2.402,3.206,1.85,4.965c-0.304,0.963-0.851,1.885-0.767,2.944c0.181,2.228,3.099,2.371,4.591,1.226c2.143-1.644,2.76-4.814,2.553-7.419C27.325,3.3,22.65,1.328,18.523,2.913c-2.125,0.819-4.059,2.697-4.338,5.456c-0.147,1.455,0.17,2.614,0.765,3.434c0.092,0.124,0.401,0.343,0.446,0.674c0.094,0.673-0.322,1.399-0.701,1.901c-2.113-0.586-3.205-2.412-3.379-4.719c-0.398-5.255,4.088-9.253,9.373-9.625c5.638-0.396,10.109,2.732,10.523,7.295c0.309,3.392-0.941,6.807-2.933,8.643c-1.493,1.379-4.673,2.73-7.271,1.41C20.434,17.087,20.18,16.729,19.607,16.155z"/></svg></a>
+				</p>
+			</div>
+		</div>
+		<div id="footer">
+			<p><a href="http://iparigrafika.hu/" target="_blank">(C) 2014 - GG 1.01 - Created by Abel Vincze/Iparigrafika Ltd.</a></p>
+		</div>
+	</body>
+	<script>
+		reset();
+		$("p.title").each(function() { replaceWithSVGText( $( this ), true, 6, 6  ); });
+		replaceWithSVGText( $("#footer a"), true, 1, 1 );
+	</script>
+</html>
